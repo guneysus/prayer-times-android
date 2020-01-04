@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 
@@ -92,9 +93,9 @@ class MainActivity : AppCompatActivity() {
         val url = "https://virtserver.swaggerhub.com/guneysus/prayer-times/v1/istanbul/weekly"
 
 // Request a string response from the provided URL.
-        val stringRequest = StringRequest(
-            Request.Method.GET, url,
-            Response.Listener<String> { response ->
+        val stringRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            Response.Listener { response ->
                 // Display the first 500 characters of the response string.
                 Log.i("REQUEST_SUCCESS", "${response}")
             },
