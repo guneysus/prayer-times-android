@@ -16,6 +16,9 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.squareup.moshi.Moshi
+import io.swagger.client.models.PrayerTime
+import io.swagger.client.models.WeeklyPrayerTimes
 
 class MainActivity : AppCompatActivity() {
 
@@ -93,10 +96,12 @@ class MainActivity : AppCompatActivity() {
         val url = "https://virtserver.swaggerhub.com/guneysus/prayer-times/v1/istanbul/weekly"
 
 // Request a string response from the provided URL.
-        val stringRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            Response.Listener { response ->
+        val stringRequest = StringRequest (
+            Request.Method.GET, url,
+            Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
+                var weeklyPrayerTimes = Moshi.Builder().build().adapter(WeeklyPrayerTimes::class.java).fromJson(response)
+
                 Log.i("REQUEST_SUCCESS", "${response}")
             },
             Response.ErrorListener { err -> {
