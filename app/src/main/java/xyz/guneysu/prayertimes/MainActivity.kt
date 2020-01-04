@@ -100,8 +100,7 @@ class MainActivity : AppCompatActivity() {
             Request.Method.GET, url,
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
-                var weeklyPrayerTimes = Moshi.Builder().build().adapter(WeeklyPrayerTimes::class.java).fromJson(response)
-
+                var prayerTimes = Moshi.Builder().build().adapter(WeeklyPrayerTimes::class.java).fromJson(response)
                 Log.i("REQUEST_SUCCESS", "${response}")
             },
             Response.ErrorListener { err -> {
@@ -110,6 +109,5 @@ class MainActivity : AppCompatActivity() {
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest)
-
     }
 }
