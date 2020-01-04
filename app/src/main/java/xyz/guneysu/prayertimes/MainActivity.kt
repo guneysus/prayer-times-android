@@ -26,6 +26,13 @@ class MainActivity : AppCompatActivity() {
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
 
+        val snoozeIntent = Intent(this, MainActivity::class.java).apply {
+            action = createNotificationChannel()
+            putExtra("LOREM", 0)
+        }
+
+        val snoozePendingIntent: PendingIntent =
+            PendingIntent.getBroadcast(this, 0, snoozeIntent, 0)
 
         var builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_background)
@@ -36,7 +43,10 @@ class MainActivity : AppCompatActivity() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             // Set the intent that will fire when the user taps the notification
             .setContentIntent(pendingIntent)
-            .setAutoCancel(true)        
+            .addAction(R.drawable.ic_launcher_foreground, getString(R.string.snooze),
+                snoozePendingIntent)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setAutoCancel(true)
 
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define

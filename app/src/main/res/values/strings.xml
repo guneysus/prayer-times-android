@@ -2,5 +2,7 @@
     <string name="app_name">Prayer Times</string>
     <string name="channel_name">Prayer Times Channel Name</string>
     <string name="channel_description">Prayer Times Channel Desc.</string>
-    <string name="CHANNEL_ID">"PRAYER_TIMES_CHANNEL</string>
+    <string name="CHANNEL_ID">PRAYER_TIMES_CHANNEL</string>
+    <string name="snooze">Snooze</string>
 </resources>
+
