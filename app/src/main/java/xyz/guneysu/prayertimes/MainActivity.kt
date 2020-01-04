@@ -10,11 +10,18 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import android.util.Log
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         var channelId = createNotificationChannel();
+
+        simpleRequest()
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -64,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             val name = getString(R.string.channel_name)
             val descriptionText = getString(R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            channelId = getString(R.string.CHANNEL_ID);
+            channelId = getString(R.string.CHANNEL_ID)
 
             val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText
@@ -72,10 +79,31 @@ class MainActivity : AppCompatActivity() {
             // Register the channel with the system
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel);
+            notificationManager.createNotificationChannel(channel)
 
         }
 
         return channelId;
+    }
+
+    private fun simpleRequest() {
+// Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val url = "https://virtserver.swaggerhub.com/guneysus/prayer-times/v1/istanbul/weekly"
+
+// Request a string response from the provided URL.
+        val stringRequest = StringRequest(
+            Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                // Display the first 500 characters of the response string.
+                Log.i("REQUEST_SUCCESS", "${response}")
+            },
+            Response.ErrorListener { err -> {
+                Log.d("ERROR", err.toString(), err)
+            } })
+
+// Add the request to the RequestQueue.
+        queue.add(stringRequest)
+
     }
 }
