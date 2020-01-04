@@ -52,20 +52,21 @@ class MainActivity : AppCompatActivity() {
             .setContentText(content)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText("Much longer text that cannot fit one line...")
-                    .setSummaryText("Summary Text")
-                    .setBigContentTitle("Content Title")
+                    .bigText(content)
+                    .setSummaryText("Prayer Times")
+                    .setBigContentTitle("Prayer Times")
             )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             // Set the intent that will fire when the user taps the notification
             .setContentIntent(pendingIntent)
-            .addAction(
-                R.drawable.ic_launcher_foreground, getString(R.string.snooze),
-                snoozePendingIntent
-            )
+//            .addAction(
+//                R.drawable.ic_launcher_foreground, getString(R.string.snooze),
+//                snoozePendingIntent
+//            )
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setAutoCancel(false)
             .setOngoing(true)
+            .setSmallIcon(android.R.color.transparent);
 
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
