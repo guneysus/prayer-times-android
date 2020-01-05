@@ -9,10 +9,12 @@ import java.util.*
 
 @Entity(tableName = "prayer_times")
 data class PrayerTimeEntity(
+
+    @ColumnInfo(name = "date") val date: Date,
+
     @PrimaryKey val uid: Int,
 
     @ColumnInfo(name = "city") val city: kotlin.String,
-//    @ColumnInfo(name = "date") val date: Date
     @ColumnInfo(name = "fajr") val fajr: kotlin.String,
     @ColumnInfo(name = "sunrise") val sunrise: kotlin.String,
     @ColumnInfo(name = "dhuhr") val dhuhr: kotlin.String,

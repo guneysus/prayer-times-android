@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AppCompatActivity
@@ -18,7 +19,8 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.swagger.client.models.PrayerTime
+import io.swagger.client.models.WeeklyPrayerTimes
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,9 +31,15 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        createPrayerTimesDb()
         createMoshi();
-        simpleRequest(db)
+        createPrayerTimesDb()
+//        updateDb(db)
+        init()
+    }
+
+    private fun init() {
+        val model = db.context().get("istanbul", date(2020, 1, 5))
+        createNotification(model)
     }
 
     private fun createMoshi() {
@@ -71,13 +79,13 @@ class MainActivity : AppCompatActivity() {
 
         var builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("Prayer Times")
+            .setContentTitle("${model.city}")
             .setContentText(content)
             .setStyle(
                 NotificationCompat.BigTextStyle()
                     .bigText(content)
-                    .setSummaryText(model.city)
-                    .setBigContentTitle("Prayer Times")
+                    .setSummaryText("${model.hijri} / ${model.gregorian}")
+                    .setBigContentTitle("${model.city}")
             )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             // Set the intent that will fire when the user taps the notification
@@ -122,10 +130,11 @@ class MainActivity : AppCompatActivity() {
         return channelId
     }
 
-    private fun simpleRequest(db: PrayerTimeDatabase) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateDb(db: PrayerTimeDatabase) {
 // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-        val url = "https://virtserver.swaggerhub.com/guneysus/prayer-times/v1/istanbul/daily"
+        val url = "http://api.namazvakti.guneysu.xyz/istanbul/weekly"
 
 // Request a string response from the provided URL.
         val stringRequest = StringRequest (
@@ -133,24 +142,29 @@ class MainActivity : AppCompatActivity() {
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
 
-                var prayerTime = moshi.adapter(PrayerTime::class.java).fromJson(response)
-                var entity = PrayerTimeEntity(
-                    uid = 1,
-                    city = "istanbul",
-                    fajr = prayerTime!!.fajr,
-                    sunrise = prayerTime!!.sunrise,
-                    dhuhr = prayerTime!!.dhuhr,
-                    asr = prayerTime!!.asr,
-                    maghrib = prayerTime!!.maghrib,
-                    isha = prayerTime!!.isha,
-                    hijri = prayerTime!!.hijri,
-                    gregorian = prayerTime!!.gregorian)
+                var response = moshi.adapter(WeeklyPrayerTimes::class.java).fromJson(response)
+                var i = 1
 
-                db.context().insertAll(entity)
+                for(prayerTime in response!!.data!!.iterator()) {
 
-                val model = db.context().getSample()
+                    val dateRepresentation = date(prayerTime.gregorian)
 
-                createNotification(model)
+                    var entity = PrayerTimeEntity(
+                        uid = i,
+                        city = "istanbul",
+                        date = dateRepresentation,
+                        fajr = prayerTime!!.fajr,
+                        sunrise = prayerTime!!.sunrise,
+                        dhuhr = prayerTime!!.dhuhr,
+                        asr = prayerTime!!.asr,
+                        maghrib = prayerTime!!.maghrib,
+                        isha = prayerTime!!.isha,
+                        hijri = prayerTime!!.hijri,
+                        gregorian = prayerTime!!.gregorian)
+
+                    db.context().insertAll(entity)
+                    i++
+                }
  
                 Log.i("REQUEST_SUCCESS", "${response}")
             },
@@ -160,5 +174,46 @@ class MainActivity : AppCompatActivity() {
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest)
+    }
+
+    private fun date(year: Int, month: Int, day: Int): Date {
+        val cal = Calendar.getInstance()
+        cal.set(year, month, day,0,0,0)
+
+        cal.timeZone = TimeZone.getTimeZone("GMT")
+
+        val dateRepresentation = cal.time
+
+        return dateRepresentation
+    }
+
+    private fun date(greg: String) : Date {
+        var splitted = greg.split(' ')
+        var day = splitted.first().toInt()
+        var month = when(splitted[1]) {
+            "Ocak" -> 1
+            "Şubat" -> 2
+            "Mart" -> 3
+            "Nisan" -> 4
+            "Mayıs" -> 5
+            "Haziran" -> 6
+            "Temmuz" -> 7
+            "Ağustos" -> 8
+            "Eylül" -> 9
+            "Ekim" -> 10
+            "Kasım" -> 11
+            "Aralık" -> 12
+            else -> 0
+        }
+        var year = splitted.get(2).toInt()
+
+        val cal = Calendar.getInstance()
+
+        cal.set(year, month, day,0,0,0)
+        cal.timeZone = TimeZone.getTimeZone("GMT")
+
+
+        val dateRepresentation = cal.time
+        return dateRepresentation
     }
 }
