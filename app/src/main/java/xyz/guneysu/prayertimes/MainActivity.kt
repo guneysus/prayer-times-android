@@ -150,11 +150,11 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDb(db: PrayerTimeDatabase) {
 // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(this)
-        val url = "http://api.namazvakti.guneysu.xyz/istanbul/weekly"
+        var queue = Volley.newRequestQueue(this)
+        var url = "http://api.namazvakti.guneysu.xyz/istanbul/weekly"
 
 // Request a string response from the provided URL.
-        val stringRequest = StringRequest (
+        var stringRequest = StringRequest (
             Request.Method.GET, url,
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity() {
 
                 for(prayerTime in response!!.data!!.iterator()) {
 
-                    val dateRepresentation = date(prayerTime.gregorian)
+                    var dateRepresentation = date(prayerTime.gregorian)
 
                     var entity = PrayerTimeEntity(
                         uid = i,
@@ -185,9 +185,11 @@ class MainActivity : AppCompatActivity() {
  
                 Log.i("REQUEST_SUCCESS", "${response}")
             },
-            Response.ErrorListener { err -> {
-                Log.d("ERROR", err.toString(), err)
-            } })
+            Response.ErrorListener { err ->
+                run {
+                    Log.e("ERROR", err.toString(), err)
+                }
+            })
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest)
