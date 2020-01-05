@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         simpleRequest()
     }
 
-    private fun createNotification(title: String, content: String) {
+    private fun createNotification(content: String) {
         var channelId = createNotificationChannel();
 
         // Create an explicit intent for an Activity in your app
@@ -48,12 +48,12 @@ class MainActivity : AppCompatActivity() {
 
         var builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle(title)
+            .setContentTitle("Prayer Times")
             .setContentText(content)
             .setStyle(
                 NotificationCompat.BigTextStyle()
                     .bigText(content)
-                    .setSummaryText("Prayer Times")
+//                    .setSummaryText("Prayer Times")
                     .setBigContentTitle("Prayer Times")
             )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -110,8 +110,8 @@ class MainActivity : AppCompatActivity() {
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
                 var p = Moshi.Builder().build().adapter(PrayerTime::class.java).fromJson(response)
-                var title = "${p?.fajr} | ${p?.sunrise} | ${p?.dhuhr} | ${p?.asr} | ${p?.maghrib} | ${p?.isha}";
-                createNotification(title = title, content = title)
+                var title = "${p?.fajr} ${p?.sunrise} ${p?.dhuhr} ${p?.asr} ${p?.maghrib} ${p?.isha}";
+                createNotification(content = title)
  
                 Log.i("REQUEST_SUCCESS", "${response}")
             },
