@@ -2,11 +2,12 @@ package xyz.guneysu.prayertimes
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.PrimaryKey
 import java.time.LocalDate
 import java.util.*
 
-@Entity
+@Entity(tableName = "prayer_times")
 data class PrayerTimeEntity(
     @PrimaryKey val uid: Int,
 

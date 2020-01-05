@@ -11,6 +11,8 @@
 */
 package io.swagger.client.models
 
+import com.squareup.moshi.JsonClass
+
 
 /**
  * 
@@ -23,6 +25,8 @@ package io.swagger.client.models
  * @param hijri 
  * @param gregorian 
  */
+
+@JsonClass(generateAdapter = true) // https://stackoverflow.com/a/58662289/1766716
 data class PrayerTime (
 
     val fajr: kotlin.String,

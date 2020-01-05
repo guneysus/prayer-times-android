@@ -8,7 +8,7 @@ import android.arch.persistence.room.RoomDatabase
 
 
 // TODO Use Singleton pattern
-@Database(entities = arrayOf(PrayerTimeEntity::class), version = 1)
+@Database(entities = arrayOf(PrayerTimeEntity::class), version = 1, exportSchema = false)
 abstract class PrayerTimeDatabase : RoomDatabase() {
     abstract fun context(): PrayerTimeContext
 }

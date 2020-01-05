@@ -4,5 +4,6 @@
     <string name="channel_description">Prayer Times Channel Desc.</string>
     <string name="CHANNEL_ID">PRAYER_TIMES_CHANNEL</string>
     <string name="snooze">Snooze</string>
+    <string name="DB_NAME">prayer_times</string>
 </resources>
 
