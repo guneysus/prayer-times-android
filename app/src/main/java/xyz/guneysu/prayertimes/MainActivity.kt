@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var moshi: Moshi
     lateinit var db: PrayerTimeDatabase
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         val today = Calendar.getInstance().time;
         val model = db.context().get("istanbul", date(today.year, today.month, today.day))
         createNotification(model)
+
     }
 
     private fun createMoshi() {
@@ -103,6 +105,8 @@ class MainActivity : AppCompatActivity() {
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setSmallIcon(android.R.color.transparent)
+
+            super.onBackPressed();
         }
 
 
