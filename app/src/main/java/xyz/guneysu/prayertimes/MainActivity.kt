@@ -3,6 +3,7 @@ package xyz.guneysu.prayertimes
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -24,11 +25,24 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        simpleRequest()
+        val db = createPrayerTimesDb();
+        simpleRequest(db)
     }
 
-    private fun createNotification(content: String) {
+    private fun createPrayerTimesDb() : PrayerTimeDatabase {
+        val db = Room.databaseBuilder(
+            applicationContext,
+            PrayerTimeDatabase::class.java, "prayer-times"
+        )
+            .build()
+
+        return db
+    }
+
+    private fun createNotification(model: PrayerTimeEntity) {
+
+        var content = "${model.fajr} ${model.sunrise} ${model.dhuhr} ${model.asr} ${model.maghrib} ${model.isha}";
+
         var channelId = createNotificationChannel();
 
         // Create an explicit intent for an Activity in your app
@@ -53,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             .setStyle(
                 NotificationCompat.BigTextStyle()
                     .bigText(content)
-//                    .setSummaryText("Prayer Times")
+                    .setSummaryText(model.city)
                     .setBigContentTitle("Prayer Times")
             )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -99,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         return channelId;
     }
 
-    private fun simpleRequest() {
+    private fun simpleRequest(db: PrayerTimeDatabase) {
 // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url = "https://virtserver.swaggerhub.com/guneysus/prayer-times/v1/istanbul/daily"
@@ -109,9 +123,24 @@ class MainActivity : AppCompatActivity() {
             Request.Method.GET, url,
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
-                var p = Moshi.Builder().build().adapter(PrayerTime::class.java).fromJson(response)
-                var title = "${p?.fajr} ${p?.sunrise} ${p?.dhuhr} ${p?.asr} ${p?.maghrib} ${p?.isha}";
-                createNotification(content = title)
+                var prayerTime = Moshi.Builder().build().adapter(PrayerTime::class.java).fromJson(response)
+                var entity = PrayerTimeEntity(
+                    uid = 1,
+                    city = "istanbul",
+                    fajr = prayerTime!!.fajr,
+                    sunrise = prayerTime!!.sunrise,
+                    dhuhr = prayerTime!!.dhuhr,
+                    asr = prayerTime!!.asr,
+                    maghrib = prayerTime!!.maghrib,
+                    isha = prayerTime!!.isha,
+                    hijri = prayerTime!!.hijri,
+                    gregorian = prayerTime!!.gregorian)
+
+                db.context().insertAll(entity)
+
+                val model = db.context().getSample()
+
+                createNotification(model)
  
                 Log.i("REQUEST_SUCCESS", "${response}")
             },

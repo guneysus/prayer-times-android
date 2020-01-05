@@ -25,13 +25,13 @@ package io.swagger.client.models
  */
 data class PrayerTime (
 
-    val fajr: kotlin.String? = null,
-    val sunrise: kotlin.String? = null,
-    val dhuhr: kotlin.String? = null,
-    val asr: kotlin.String? = null,
-    val maghrib: kotlin.String? = null,
-    val isha: kotlin.String? = null,
-    val hijri: kotlin.String? = null,
-    val gregorian: kotlin.String? = null
+    val fajr: kotlin.String,
+    val sunrise: kotlin.String,
+    val dhuhr: kotlin.String ,
+    val asr: kotlin.String,
+    val maghrib: kotlin.String ,
+    val isha: kotlin.String,
+    val hijri: kotlin.String,
+    val gregorian: kotlin.String
 ) {
 }
