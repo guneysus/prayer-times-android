@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
             PrayerTimeDatabase::class.java, "prayer-times"
         )
             .build()
-
         return db
     }
 
