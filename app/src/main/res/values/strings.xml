@@ -3,7 +3,7 @@
     <string name="channel_name">Prayer Times Channel Name</string>
     <string name="channel_description">Prayer Times Channel Desc.</string>
     <string name="CHANNEL_ID">PRAYER_TIMES_CHANNEL</string>
-    <string name="snooze">Snooze</string>
+    <string name="update">Update</string>
     <string name="DB_NAME">prayer_times</string>
 </resources>
 

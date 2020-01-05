@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.swagger.client.models.WeeklyPrayerTimes
+import java.time.LocalDate
 import java.util.*
 
 
@@ -33,12 +34,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         createMoshi();
         createPrayerTimesDb()
-//        updateDb(db)
+
+        val today = Calendar.getInstance().time;
+        val model = db.context().get("istanbul", date(today.year, today.month, today.day))
+
+        if(model == null) updateDb(db)
+
         init()
     }
 
     private fun init() {
-        val model = db.context().get("istanbul", date(2020, 1, 5))
+        val today = Calendar.getInstance().time;
+        val model = db.context().get("istanbul", date(today.year, today.month, today.day))
         createNotification(model)
     }
 
@@ -58,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun createNotification(model: PrayerTimeEntity?) {
 
-        var content = "${model!!.fajr} ${model!!.sunrise} ${model!!.dhuhr} ${model!!.asr} ${model!!.maghrib} ${model!!.isha}"
 
         var channelId = createNotificationChannel()
 
@@ -74,30 +80,37 @@ class MainActivity : AppCompatActivity() {
             putExtra("LOREM", 0)
         }
 
-        val snoozePendingIntent: PendingIntent =
+        val updatePendingIntent: PendingIntent =
             PendingIntent.getBroadcast(this, 0, snoozeIntent, 0)
 
         var builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("${model.city}")
-            .setContentText(content)
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText(content)
-                    .setSummaryText("${model.hijri} / ${model.gregorian}")
-                    .setBigContentTitle("${model.city}")
-            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            // Set the intent that will fire when the user taps the notification
-            .setContentIntent(pendingIntent)
-//            .addAction(
-//                R.drawable.ic_launcher_foreground, getString(R.string.snooze),
-//                snoozePendingIntent
-//            )
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setSmallIcon(android.R.color.transparent)
+
+        if(model != null) {
+            var content = "${model!!.fajr} ${model!!.sunrise} ${model!!.dhuhr} ${model!!.asr} ${model!!.maghrib} ${model!!.isha}"
+            builder.setContentTitle("${model.city}")
+                .setContentText(content)
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(content)
+                        .setSummaryText("${model.hijri} / ${model.gregorian}")
+                        .setBigContentTitle("${model.city}")
+                )
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(false)
+                .setOngoing(true)
+                .setSmallIcon(android.R.color.transparent)
+        }
+
+
+        else
+            builder
+                .setContentText("Click update to sync prayer times")
+                .setContentTitle("Connect to the internet")
+                .addAction(R.drawable.ic_launcher_foreground, getString(R.string.update), updatePendingIntent)
 
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
