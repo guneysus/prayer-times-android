@@ -36,8 +36,12 @@ class MainActivity : AppCompatActivity() {
         createMoshi();
         createPrayerTimesDb()
 
-        val today = Calendar.getInstance().time;
-        val model = db.context().get("istanbul", date(today.year, today.month, today.day))
+        val today = Calendar.getInstance()
+        var year = today.get(Calendar.YEAR)
+        var month = today.get(Calendar.MONTH)
+        var day = today.get(Calendar.DAY_OF_MONTH)
+
+        val model = db.context().get("istanbul", date(year, month, day))
 
         if(model == null) updateDb(db)
 
@@ -45,8 +49,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        val today = Calendar.getInstance().time;
-        val model = db.context().get("istanbul", date(today.year, today.month, today.day))
+        val today = Calendar.getInstance()
+        var year = today.get(Calendar.YEAR)
+        var month = today.get(Calendar.MONTH)
+        var day = today.get(Calendar.DAY_OF_MONTH)
+        val model = db.context().get("istanbul", date(year, month, day))
+
         createNotification(model)
 
     }

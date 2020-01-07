@@ -19,7 +19,7 @@ interface PrayerTimeContext {
 //            "last_name LIKE :last LIMIT 1")
 //    fun findByName(first: String, last: String): PrayerTimeEntity
 
-    @Query("SELECT * FROM prayer_times WHERE city = :city and :date <= date order by date LIMIT 1")
+    @Query("SELECT * FROM prayer_times WHERE city = :city and date >= :date order by date LIMIT 1")
     fun get(city: String, date: Date) : PrayerTimeEntity;
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
