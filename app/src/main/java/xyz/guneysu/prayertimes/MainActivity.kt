@@ -20,7 +20,6 @@ import com.android.volley.toolbox.Volley
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.swagger.client.models.WeeklyPrayerTimes
-import java.time.LocalDate
 import java.util.*
 
 
@@ -36,24 +35,34 @@ class MainActivity : AppCompatActivity() {
         createMoshi();
         createPrayerTimesDb()
 
-        val today = Calendar.getInstance()
-        var year = today.get(Calendar.YEAR)
-        var month = today.get(Calendar.MONTH)
-        var day = today.get(Calendar.DAY_OF_MONTH)
+        var todayDate = getToday()
 
-        val model = db.context().get("istanbul", date(year, month, day))
+        var all = db.context().getAll()
+
+        for(prayerTime in all.iterator()) {
+            Log.i("INFO", prayerTime.date.toString())
+        }
+
+
+        val model = db.context().get("istanbul", todayDate)
 
         if(model == null) updateDb(db)
 
         init()
     }
 
-    private fun init() {
+    private fun getToday(): Date {
         val today = Calendar.getInstance()
         var year = today.get(Calendar.YEAR)
-        var month = today.get(Calendar.MONTH)
+        var month = today.get(Calendar.MONTH )
         var day = today.get(Calendar.DAY_OF_MONTH)
-        val model = db.context().get("istanbul", date(year, month, day))
+        var todayDate = date(year, month, day)
+        return todayDate
+    }
+
+    private fun init() {
+
+        val model = db.context().get("istanbul", getToday())
 
         createNotification(model)
 
@@ -207,7 +216,7 @@ class MainActivity : AppCompatActivity() {
         val cal = Calendar.getInstance()
         cal.set(year, month, day,0,0,0)
 
-        cal.timeZone = TimeZone.getTimeZone("GMT")
+        cal.timeZone = TimeZone.getTimeZone("Asia/Istanbul")
 
         val dateRepresentation = cal.time
 
@@ -218,18 +227,18 @@ class MainActivity : AppCompatActivity() {
         var splitted = greg.split(' ')
         var day = splitted.first().toInt()
         var month = when(splitted[1]) {
-            "Ocak" -> 1
-            "Şubat" -> 2
-            "Mart" -> 3
-            "Nisan" -> 4
-            "Mayıs" -> 5
-            "Haziran" -> 6
-            "Temmuz" -> 7
-            "Ağustos" -> 8
-            "Eylül" -> 9
-            "Ekim" -> 10
-            "Kasım" -> 11
-            "Aralık" -> 12
+            "Ocak" -> 0
+            "Şubat" -> 1
+            "Mart" -> 2
+            "Nisan" -> 3
+            "Mayıs" -> 4
+            "Haziran" -> 5
+            "Temmuz" -> 6
+            "Ağustos" -> 7
+            "Eylül" -> 8
+            "Ekim" -> 9
+            "Kasım" -> 10
+            "Aralık" -> 11
             else -> 0
         }
         var year = splitted.get(2).toInt()

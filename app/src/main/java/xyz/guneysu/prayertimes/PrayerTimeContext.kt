@@ -7,7 +7,7 @@ import java.util.*
 @Dao
 interface PrayerTimeContext {
     @Query("SELECT * FROM prayer_times")
-    fun getAll(): LiveData<List<PrayerTimeEntity>>
+    fun getAll(): List<PrayerTimeEntity>
 
     @Query("SELECT * FROM prayer_times where uid = 1 LIMIT 1")
     fun getSample(): PrayerTimeEntity
@@ -19,8 +19,8 @@ interface PrayerTimeContext {
 //            "last_name LIKE :last LIMIT 1")
 //    fun findByName(first: String, last: String): PrayerTimeEntity
 
-    @Query("SELECT * FROM prayer_times WHERE city = :city and date >= :date order by date LIMIT 1")
-    fun get(city: String, date: Date) : PrayerTimeEntity;
+    @Query("SELECT * FROM prayer_times WHERE city = :city and date >= :today order by uid ASC LIMIT 1")
+    fun get(city: String, today: Date) : PrayerTimeEntity;
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg entities: PrayerTimeEntity)
