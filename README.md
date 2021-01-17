@@ -1,1 +1,1 @@
-# prayer-tines-android
+# prayer-times-android
